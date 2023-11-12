@@ -38,13 +38,15 @@ class Instrument(object):
 
     """
 
-    def __init__(self, program, is_drum=False, name=''):
+    def __init__(self, program, is_drum=False, name='', track_number=0, channel=0):
         """Create the Instrument.
 
         """
         self.program = program
         self.is_drum = is_drum
         self.name = name
+        self.channel = channel
+        self.track_number = track_number
         self.notes = []
         self.pitch_bends = []
         self.control_changes = []
@@ -535,5 +537,5 @@ class Instrument(object):
         return synthesized
 
     def __repr__(self):
-        return 'Instrument(program={}, is_drum={}, name="{}")'.format(
-            self.program, self.is_drum, self.name.replace('"', r'\"'))
+        return 'Instrument(program={}, is_drum={}, name="{}", track={}, channel={})'.format(
+            self.program, self.is_drum, self.name.replace('"', r'\"'), self.track_number, self.channel)
