@@ -19,8 +19,8 @@ from heapq import merge
 import os
 import pkg_resources
 
-import music21
-from music21 import converter
+import plugins.music21 as music21
+from plugins.music21 import converter
 
 from .instrument import Instrument
 from .containers import (KeySignature, TimeSignature, Lyric, Note,
@@ -219,10 +219,32 @@ class PrettyMIDI(object):
                                        self.__tick_to_time[event.time])
                 self.time_signature_changes.append(ts_obj)
 
-#        if not len(self.key_signature_changes):
-        if isinstance(self.midi_file, str):
-            feature_extraction(self.midi_file)
-            print(self.key_signature_changes)
+        ''' 
+            1. pretty midi calls musif FeaturesExtractor.extract()
+            2. FeaturesExtractor.extract() calls _process_corupus in extract.py
+            3. _process_corpus calls _process_score in extract.py
+            4. _process_score calls the respective module handler (i.e. key, harmony, core) from musif/extract/features
+            5. for time signature, key/handler is called
+            6. key/handler depends on core/handler
+            7. in update_score_objects() in core/handler, get_key_and_mode() is called, and saves key in a constant in core/constants.py
+            8. in get_key_and_mode() from musicxml/key.py, score.analyze("key") is called, which calls music21 library to analyze key signature
+            9. in score.analyze("key"), discrete.analyzeStream() is called
+            10. in discrete.analyzeStream(), DiscreteAnalysis class is called
+            11. KeyWeightKeyAnalysis extends from DiscreteAnalysis
+            12. in KeyWeightKeyAnalysis, getSolution() is called which outputs the key signature
+            13. to change key signature output, we change in self.process of KeyWeightKeyAnalysis
+            
+        '''
+        # if not len(self.key_signature_changes):
+#         if isinstance(self.midi_file, str):
+#             feature_extraction(self.midi_file)
+#             print(self.key_signature_changes)
+#             # score = music21.converter.parse(self.midi_file)
+#             # stream = score
+#             # processor = music21.analysis.discrete.KrumhanslSchmuckler()
+#             # wa = music21.analysis.windowed.WindowedAnalysis(stream.flatten(), processor)
+#             # a, b = wa.analyze(50)
+#             # print(a,b)
 
 
         # We search for lyrics and text events on all tracks
